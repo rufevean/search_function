@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Function</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <script async src="https://cse.google.com/cse.js?cx=4717c609c54e24250"></script>
+</head>
+<body>
+    <div class="container mt-5">
+        <h1 class="text-center">Search Function</h1>
+        <div class="input-group mb-3">
+            <input type="text" id="searchTerm" class="form-control" placeholder="Enter search term">
+            <div class="input-group-append">
+                <button class="btn btn-primary" onclick="search()">Search</button>
+            </div>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="filterYouTube" checked>
+            <label class="form-check-label" for="filterYouTube">YouTube</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="filterArticles" checked>
+            <label class="form-check-label" for="filterArticles">Articles</label>
+        </div>
+        <div class="form-check form-check-inline">
+            <input class="form-check-input" type="checkbox" id="filterPapers" checked>
+            <label class="form-check-label" for="filterPapers">Academic Papers</label>
+        </div>
+        <ul id="results" class="list-group mt-3"></ul>
+    </div>
+
+    <script>
+        async function search() {
+            const searchTerm = document.getElementById('searchTerm').value;
+            const filterYouTube = document.getElementById('filterYouTube').checked;
+            const filterArticles = document.getElementById('filterArticles').checked;
+            const filterPapers = document.getElementById('filterPapers').checked;
+
+            const response = await fetch('/search', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ query: searchTerm, filterYouTube, filterArticles, filterPapers })
+            });
+            const results = await response.json();
+            console.log('Client-side results:', results); // Log the results on the client side
+            const resultsList = document.getElementById('results');
+            resultsList.innerHTML = '';
+
+            if (Array.isArray(results) && results.length > 0) {
+                results.forEach(result => {
+                    const li = document.createElement('li');
+                    li.className = 'list-group-item';
+                    li.innerHTML = `<a href="${result.link}" target="_blank">${result.title}</a>`;
+                    resultsList.appendChild(li);
+                });
+            } else {
+                resultsList.innerHTML = '<li class="list-group-item">No results found</li>';
+            }
+        }
+    </script>
+</body>
+</html>
