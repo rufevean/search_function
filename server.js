@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const axios = require('axios');
 const path = require('path');
+const { getJson } = require('serpapi');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -49,18 +50,27 @@ const fetchArticlesAndBlogs = async (query) => {
 };
 
 const fetchAcademicPapers = async (query) => {
-    try {
-        const url = `https://serpapi.com/search.json?engine=google_scholar&q=${query}&api_key=${process.env.SCHOLAR_API_KEY}`;
-        const response = await axios.get(url);
-        return response.data.organic_results.map(item => ({
-            title: item.title,
-            link: item.link,
-            snippet: item.snippet
-        }));
-    } catch (error) {
-        console.error('Error fetching academic papers:', error.response ? error.response.data : error.message);
+    return new Promise((resolve, reject) => {
+        getJson({
+            engine: "google_scholar",
+            q: query,
+            api_key: process.env.SCHOLAR_API_KEY
+        }, (json) => {
+            if (json.error) {
+                reject(json.error);
+            } else {
+                const results = json.organic_results.map(item => ({
+                    title: item.title,
+                    link: item.link,
+                    snippet: item.snippet
+                }));
+                resolve(results);
+            }
+        });
+    }).catch(error => {
+        console.error('Error fetching academic papers:', error);
         return [];
-    }
+    });
 };
 
 app.post('/api/search', async (req, res) => {
