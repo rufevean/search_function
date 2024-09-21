@@ -14,7 +14,7 @@ app.use(express.json());
 app.use(express.static(path.join(__dirname, 'public')));
 
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname,  'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 const fetchYouTubeVideos = async (query) => {
@@ -76,10 +76,10 @@ app.post('/search', async (req, res) => {
         const resultsArray = await Promise.all(promises);
         const results = resultsArray.flat();
 
-    
-        results.sort((a, b) => (b.views || 0) - (a.views || 0)); 
+        // Combine and rank results
+        results.sort((a, b) => (b.views || 0) - (a.views || 0)); // Example ranking by views
 
-        console.log('Search results:', results); 
+        console.log('Search results:', results); // Log the results
         res.json(results);
     } catch (error) {
         console.error('Error fetching search results:', error);
