@@ -76,10 +76,10 @@ app.post('/search', async (req, res) => {
         const resultsArray = await Promise.all(promises);
         const results = resultsArray.flat();
 
-        // Combine and rank results
-        results.sort((a, b) => (b.views || 0) - (a.views || 0)); // Example ranking by views
+    
+        results.sort((a, b) => (b.views || 0) - (a.views || 0)); 
 
-        console.log('Search results:', results); // Log the results
+        console.log('Search results:', results); 
         res.json(results);
     } catch (error) {
         console.error('Error fetching search results:', error);
