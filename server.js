@@ -50,9 +50,9 @@ const fetchArticlesAndBlogs = async (query) => {
 
 const fetchAcademicPapers = async (query) => {
     try {
-        const url = `https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=citation&id=${query}`;
+        const url = `https://serpapi.com/search.json?engine=google_scholar&q=${query}&api_key=${process.env.SCHOLAR_API_KEY}`;
         const response = await axios.get(url);
-        return response.data.items.map(item => ({
+        return response.data.organic_results.map(item => ({
             title: item.title,
             link: item.link,
             snippet: item.snippet
@@ -74,6 +74,8 @@ app.post('/api/search', async (req, res) => {
 
         const resultsArray = await Promise.all(promises);
         const results = resultsArray.flat();
+
+        // Combine and rank results
         results.sort((a, b) => (b.views || 0) - (a.views || 0)); // Example ranking by views
 
         console.log('Search results:', results); // Log the results
