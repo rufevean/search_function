@@ -64,7 +64,7 @@ const fetchAcademicPapers = async (query) => {
     }
 };
 
-app.post('/search', async (req, res) => {
+app.post('/api/search', async (req, res) => {
     const { query, filterYouTube, filterArticles, filterPapers } = req.body;
 
     try {
