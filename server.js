@@ -50,7 +50,6 @@ const fetchArticlesAndBlogs = async (query) => {
 
 const fetchAcademicPapers = async (query) => {
     try {
-        // Example using PubMed API
         const url = `https://api.ncbi.nlm.nih.gov/lit/ctxp/v1/pubmed/?format=citation&id=${query}`;
         const response = await axios.get(url);
         return response.data.items.map(item => ({
@@ -75,8 +74,6 @@ app.post('/api/search', async (req, res) => {
 
         const resultsArray = await Promise.all(promises);
         const results = resultsArray.flat();
-
-        // Combine and rank results
         results.sort((a, b) => (b.views || 0) - (a.views || 0)); // Example ranking by views
 
         console.log('Search results:', results); // Log the results
